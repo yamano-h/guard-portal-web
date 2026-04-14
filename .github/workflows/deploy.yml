@@ -29,15 +29,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Inject D1 database_id
-        run: |
-          sed -i 's/"database_id": "local"/"database_id": "${{ secrets.D1_DATABASE_ID }}"/' wrangler.jsonc
-
       - name: Build
         run: npm run build
+
+      - name: Inject D1 database_id into generated wrangler config
+        run: |
+          sed -i 's/"database_id":"local"/"database_id":"${{ secrets.D1_DATABASE_ID }}"/g' dist/server/wrangler.json
+          sed -i 's/"database_id": "local"/"database_id": "${{ secrets.D1_DATABASE_ID }}"/g' dist/server/wrangler.json
 
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy --config dist/server/wrangler.json

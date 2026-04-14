@@ -5,8 +5,7 @@
   "compatibility_date": "2026-02-24",
   "compatibility_flags": ["nodejs_compat"],
 
-  // D1 データベース（初回デプロイ前に `wrangler d1 create guard-portal-db` を実行し、
-  // database_id を "local" から実際の ID に書き換えてください。）
+  // D1 データベース（ローカル開発用は "local"。CI では D1_DATABASE_ID シークレットで上書き。）
   "d1_databases": [
     {
       "binding": "DB",
@@ -15,7 +14,7 @@
     }
   ],
 
-  // R2 メディアストレージ（初回デプロイ前に `wrangler r2 bucket create guard-portal-media` を実行してください。）
+  // R2 メディアストレージ
   "r2_buckets": [
     {
       "binding": "MEDIA",
@@ -23,10 +22,15 @@
     }
   ],
 
-  // EmDash プラグインサンドボックス（Worker Loader）
-  "worker_loaders": [
+  // セッション管理用 KV
+  "kv_namespaces": [
     {
-      "binding": "LOADER"
+      "binding": "SESSION",
+      "id": "19f28fd0b60f4e408d1c078ccc66f37f"
     }
-  ]
+  ],
+
+  // EmDash プラグインサンドボックス（Worker Loader）
+  // 注: 有料プランが必要。不要な場合はコメントアウトのままで OK。
+  // "worker_loaders": [{ "binding": "LOADER" }]
 }

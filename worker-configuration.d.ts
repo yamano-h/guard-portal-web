@@ -2,5 +2,5 @@
 interface Env {
   DB: D1Database;
   MEDIA: R2Bucket;
-  LOADER: Fetcher;
+  // LOADER: Fetcher; // worker_loaders: 有料プランが必要
 }
