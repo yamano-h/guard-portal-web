@@ -1,47 +1,78 @@
 ---
-import { PortableText } from "emdash/components";
-
 interface Props {
   blocks: any[];
 }
 
 const { blocks = [] } = Astro.props;
+
+// アイコンマッピング（テキストベース — 依存ゼロ）
+const ICONS: Record<string, string> = {
+  "file-text":  "📄",
+  "send":       "📨",
+  "refresh-cw": "🔄",
+  "pen-tool":   "✍️",
+  "users":      "👥",
+  "code":       "🔗",
+};
 ---
 
 {blocks.map((block) => {
   switch (block._type) {
+
+    /* ======================================================
+       HERO
+    ====================================================== */
     case "marketing.hero":
       return (
         <section class="hero">
-          <div class="container">
+          <div class="hero-inner container">
+            <div class="hero-badge">警備業向けクラウドシステム</div>
             <h1 set:html={block.headline?.replace(/\n/g, "<br>")} />
-            {block.subheadline && <p class="hero-sub">{block.subheadline}</p>}
+            {block.subheadline && (
+              <p class="hero-sub">{block.subheadline}</p>
+            )}
             {(block.primaryCta || block.secondaryCta) && (
               <div class="hero-ctas">
                 {block.primaryCta && (
-                  <a href={block.primaryCta.url} class="cta-primary">{block.primaryCta.label}</a>
+                  <a href={block.primaryCta.url} class="cta-primary">
+                    {block.primaryCta.label}
+                    <span aria-hidden="true">→</span>
+                  </a>
                 )}
                 {block.secondaryCta && (
-                  <a href={block.secondaryCta.url} class="cta-secondary">{block.secondaryCta.label}</a>
+                  <a href={block.secondaryCta.url} class="cta-secondary">
+                    {block.secondaryCta.label}
+                  </a>
                 )}
               </div>
             )}
+            <p class="hero-trust">
+              <span>✓ クレジットカード不要</span>
+              <span>✓ 30日間無料トライアル</span>
+              <span>✓ 最短3営業日で導入</span>
+            </p>
           </div>
         </section>
       );
 
+    /* ======================================================
+       FEATURES
+    ====================================================== */
     case "marketing.features":
       return (
         <section class="features" id="features">
           <div class="container">
             <div class="section-header">
+              <div class="section-label">機能</div>
               <h2>{block.headline}</h2>
-              {block.subheadline && <p>{block.subheadline}</p>}
+              {block.subheadline && <p class="section-sub">{block.subheadline}</p>}
             </div>
             <div class="features-grid">
               {(block.items ?? []).map((item: any) => (
                 <div class="feature-card">
-                  <div class="feature-icon" aria-hidden="true">✦</div>
+                  <div class="feature-icon-wrap" aria-hidden="true">
+                    {ICONS[item.icon] ?? "✦"}
+                  </div>
                   <h3>{item.title}</h3>
                   <p>{item.description}</p>
                 </div>
@@ -51,20 +82,30 @@ const { blocks = [] } = Astro.props;
         </section>
       );
 
+    /* ======================================================
+       TESTIMONIALS
+    ====================================================== */
     case "marketing.testimonials":
       return (
         <section class="testimonials">
           <div class="container">
             <div class="section-header">
+              <div class="section-label">導入事例</div>
               <h2>{block.headline}</h2>
             </div>
             <div class="testimonials-grid">
               {(block.items ?? []).map((item: any) => (
                 <blockquote class="testimonial-card">
-                  <p class="quote">"{item.quote}"</p>
-                  <footer>
-                    <strong>{item.author}</strong>
-                    <span>{item.role}、{item.company}</span>
+                  <div class="quote-mark" aria-hidden="true">"</div>
+                  <p class="quote">{item.quote}</p>
+                  <footer class="testimonial-author">
+                    <div class="author-avatar" aria-hidden="true">
+                      {item.author.charAt(0)}
+                    </div>
+                    <div>
+                      <div class="author-name">{item.author}</div>
+                      <div class="author-meta">{item.role}、{item.company}</div>
+                    </div>
                   </footer>
                 </blockquote>
               ))}
@@ -73,29 +114,44 @@ const { blocks = [] } = Astro.props;
         </section>
       );
 
+    /* ======================================================
+       PRICING
+    ====================================================== */
     case "marketing.pricing":
       return (
         <section class="pricing">
           <div class="container">
+            <div class="section-header">
+              <div class="section-label">料金</div>
+              <h2>{block.headline}</h2>
+            </div>
             <div class="pricing-grid">
               {(block.items ?? []).map((item: any) => (
-                <div class:list={["pricing-card", { highlighted: item.highlighted }]}>
-                  {item.highlighted && <div class="badge">おすすめ</div>}
-                  <h3>{item.name}</h3>
-                  <div class="price">
-                    <span class="amount">{item.price}</span>
-                    {item.period && <span class="period">{item.period}</span>}
+                <div class:list={["pricing-card", { "pricing-card--highlighted": item.highlighted }]}>
+                  {item.highlighted && (
+                    <div class="pricing-badge">おすすめ</div>
+                  )}
+                  <div class="pricing-header">
+                    <h3>{item.name}</h3>
+                    <div class="price">
+                      <span class="price-amount">{item.price}</span>
+                      {item.period && <span class="price-period">{item.period}</span>}
+                    </div>
+                    <p class="price-desc">{item.description}</p>
                   </div>
-                  <p class="plan-desc">{item.description}</p>
                   <ul class="feature-list">
                     {(item.features ?? []).map((f: string) => (
                       <li>
-                        <span aria-hidden="true">✓</span> {f}
+                        <span class="check" aria-hidden="true">✓</span>
+                        {f}
                       </li>
                     ))}
                   </ul>
                   {item.cta && (
-                    <a href={item.cta.url} class:list={["plan-cta", { "plan-cta--primary": item.highlighted }]}>
+                    <a
+                      href={item.cta.url}
+                      class:list={["plan-btn", { "plan-btn--primary": item.highlighted }]}
+                    >
                       {item.cta.label}
                     </a>
                   )}
@@ -106,17 +162,24 @@ const { blocks = [] } = Astro.props;
         </section>
       );
 
+    /* ======================================================
+       FAQ
+    ====================================================== */
     case "marketing.faq":
       return (
         <section class="faq">
           <div class="container">
             <div class="section-header">
+              <div class="section-label">FAQ</div>
               <h2>{block.headline}</h2>
             </div>
             <dl class="faq-list">
               {(block.items ?? []).map((item: any) => (
                 <div class="faq-item">
-                  <dt>{item.question}</dt>
+                  <dt>
+                    <span class="faq-q" aria-hidden="true">Q</span>
+                    {item.question}
+                  </dt>
                   <dd>{item.answer}</dd>
                 </div>
               ))}
@@ -131,58 +194,9 @@ const { blocks = [] } = Astro.props;
 })}
 
 <style>
-  /* ---- Hero ---- */
-  .hero {
-    padding: 6rem 0 5rem;
-    text-align: center;
-    background: linear-gradient(180deg, var(--color-bg-subtle) 0%, var(--color-bg) 100%);
-  }
-
-  .hero h1 {
-    font-size: clamp(2rem, 5vw, 3.5rem);
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    margin-bottom: 1rem;
-  }
-
-  .hero-sub {
-    font-size: 1.125rem;
-    color: var(--color-text-muted);
-    max-width: 560px;
-    margin: 0 auto 2rem;
-  }
-
-  .hero-ctas {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .cta-primary {
-    padding: 0.75rem 1.75rem;
-    background: var(--color-primary);
-    color: var(--color-primary-fg);
-    border-radius: var(--radius);
-    font-weight: 600;
-    font-size: 1rem;
-    transition: background 0.15s;
-  }
-
-  .cta-primary:hover { background: var(--color-primary-hover); }
-
-  .cta-secondary {
-    padding: 0.75rem 1.75rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    font-weight: 600;
-    font-size: 1rem;
-    transition: border-color 0.15s;
-  }
-
-  .cta-secondary:hover { border-color: var(--color-text-muted); }
-
-  /* ---- Section commons ---- */
+  /* ===================================================
+     共通
+  =================================================== */
   section { padding: 5rem 0; }
 
   .section-header {
@@ -190,119 +204,344 @@ const { blocks = [] } = Astro.props;
     margin-bottom: 3rem;
   }
 
-  .section-header h2 {
-    font-size: clamp(1.5rem, 3vw, 2.25rem);
+  .section-label {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.85rem;
+    border-radius: 9999px;
+    background: #EFF6FF;
+    color: #2563EB;
+    font-size: 0.7rem;
     font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.9rem;
+    border: 1px solid #BFDBFE;
   }
 
-  .section-header p {
-    color: var(--color-text-muted);
-    margin-top: 0.5rem;
+  .section-header h2 {
+    font-size: clamp(1.6rem, 3vw, 2.25rem);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: #0F172A;
   }
 
-  /* ---- Features ---- */
-  .features { background: var(--color-bg-subtle); }
+  .section-sub {
+    margin-top: 0.6rem;
+    font-size: 1rem;
+    color: #475569;
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ===================================================
+     Hero
+  =================================================== */
+  .hero {
+    padding: 6rem 0 5.5rem;
+    text-align: center;
+    background: linear-gradient(160deg, #F8FAFC 0%, #EFF6FF 60%, #F8FAFC 100%);
+    border-bottom: 1px solid #E2E8F0;
+  }
+
+  .hero-inner { max-width: 720px; }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.9rem;
+    border-radius: 9999px;
+    background: #EFF6FF;
+    color: #2563EB;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 1px solid #BFDBFE;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    color: #0F172A;
+    line-height: 1.15;
+    margin-bottom: 1.25rem;
+  }
+
+  .hero-sub {
+    font-size: 1.05rem;
+    color: #475569;
+    max-width: 540px;
+    margin: 0 auto 2.25rem;
+    line-height: 1.7;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 1.75rem;
+  }
+
+  .cta-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.75rem;
+    background: #2563EB;
+    color: #fff;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    box-shadow: 0 1px 3px rgba(37,99,235,.3), 0 4px 12px rgba(37,99,235,.2);
+    transition: background 150ms, box-shadow 150ms, transform 150ms;
+  }
+
+  .cta-primary:hover {
+    background: #1D4ED8;
+    box-shadow: 0 2px 6px rgba(37,99,235,.4), 0 8px 20px rgba(37,99,235,.25);
+    transform: translateY(-1px);
+  }
+
+  .cta-secondary {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.75rem 1.75rem;
+    background: #fff;
+    color: #0F172A;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,.05);
+    transition: border-color 150ms, background 150ms, transform 150ms;
+  }
+
+  .cta-secondary:hover {
+    border-color: #94A3B8;
+    background: #F8FAFC;
+    transform: translateY(-1px);
+  }
+
+  .hero-trust {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    font-size: 0.8rem;
+    color: #64748B;
+    font-weight: 500;
+  }
+
+  .hero-trust span { display: flex; align-items: center; gap: 0.3rem; }
+
+  /* ===================================================
+     Features
+  =================================================== */
+  .features { background: #F8FAFC; }
 
   .features-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.25rem;
   }
 
   .feature-card {
-    background: var(--color-bg);
-    border: 1px solid var(--color-border);
-    border-radius: calc(var(--radius) * 2);
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 16px;
     padding: 1.75rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,.05);
+    transition: border-color 150ms, box-shadow 150ms, transform 150ms;
   }
 
-  .feature-icon {
-    font-size: 1.5rem;
-    color: var(--color-primary);
-    margin-bottom: 0.75rem;
+  .feature-card:hover {
+    border-color: #BFDBFE;
+    box-shadow: 0 4px 12px rgba(37,99,235,.08);
+    transform: translateY(-2px);
   }
 
-  .feature-card h3 { font-size: 1.05rem; margin-bottom: 0.5rem; }
-
-  .feature-card p { font-size: 0.9rem; color: var(--color-text-muted); margin: 0; }
-
-  /* ---- Testimonials ---- */
-  .testimonials-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
+  .feature-icon-wrap {
+    width: 40px;
+    height: 40px;
+    background: #EFF6FF;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
   }
 
-  .testimonial-card {
-    background: var(--color-bg-subtle);
-    border: 1px solid var(--color-border);
-    border-radius: calc(var(--radius) * 2);
-    padding: 1.75rem;
+  .feature-card h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0F172A;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
+  }
+
+  .feature-card p {
+    font-size: 0.875rem;
+    color: #475569;
+    line-height: 1.65;
     margin: 0;
   }
 
+  /* ===================================================
+     Testimonials
+  =================================================== */
+  .testimonials { background: #0F172A; }
+
+  .testimonials .section-header h2 { color: #F1F5F9; }
+  .testimonials .section-label {
+    background: rgba(37,99,235,.2);
+    color: #93C5FD;
+    border-color: rgba(37,99,235,.3);
+  }
+
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .testimonial-card {
+    background: #1E293B;
+    border: 1px solid #334155;
+    border-radius: 16px;
+    padding: 1.75rem;
+    margin: 0;
+    position: relative;
+  }
+
+  .quote-mark {
+    font-size: 3.5rem;
+    line-height: 1;
+    color: #2563EB;
+    font-family: Georgia, serif;
+    margin-bottom: 0.5rem;
+    opacity: 0.7;
+  }
+
   .quote {
-    font-size: 0.95rem;
-    line-height: 1.7;
-    margin-bottom: 1.25rem;
-    color: var(--color-text);
+    font-size: 0.9rem;
+    line-height: 1.75;
+    color: #CBD5E1;
+    margin-bottom: 1.5rem;
   }
 
-  .testimonial-card footer {
+  .testimonial-author {
     display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    font-size: 0.85rem;
+    align-items: center;
+    gap: 0.75rem;
+    border-top: 1px solid #334155;
+    padding-top: 1rem;
   }
 
-  .testimonial-card footer span { color: var(--color-text-muted); }
+  .author-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: #2563EB;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
 
-  /* ---- Pricing ---- */
+  .author-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #F1F5F9;
+  }
+
+  .author-meta {
+    font-size: 0.75rem;
+    color: #64748B;
+    margin-top: 0.15rem;
+  }
+
+  /* ===================================================
+     Pricing
+  =================================================== */
+  .pricing { background: #F8FAFC; }
+
   .pricing-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
+    gap: 1.25rem;
     align-items: start;
   }
 
   .pricing-card {
-    border: 1px solid var(--color-border);
-    border-radius: calc(var(--radius) * 2);
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 16px;
     padding: 2rem;
     position: relative;
+    box-shadow: 0 1px 2px rgba(0,0,0,.05);
   }
 
-  .pricing-card.highlighted {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 20%, transparent);
+  .pricing-card--highlighted {
+    border-color: #2563EB;
+    box-shadow: 0 0 0 3px rgba(37,99,235,.12), 0 4px 16px rgba(37,99,235,.1);
   }
 
-  .badge {
+  .pricing-badge {
     position: absolute;
     top: -0.75rem;
     left: 50%;
     transform: translateX(-50%);
-    background: var(--color-primary);
-    color: var(--color-primary-fg);
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 0.2rem 0.75rem;
-    border-radius: 999px;
+    background: #2563EB;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 0.25rem 0.85rem;
+    border-radius: 9999px;
     white-space: nowrap;
   }
 
+  .pricing-header { margin-bottom: 1.5rem; }
+
   .pricing-card h3 {
-    font-size: 1.1rem;
-    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0F172A;
+    margin-bottom: 0.75rem;
   }
 
-  .price { margin-bottom: 0.75rem; }
+  .price {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    margin-bottom: 0.6rem;
+  }
 
-  .amount { font-size: 2rem; font-weight: 700; }
+  .price-amount {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #0F172A;
+    letter-spacing: -0.03em;
+  }
 
-  .period { font-size: 0.875rem; color: var(--color-text-muted); margin-left: 0.25rem; }
+  .price-period {
+    font-size: 0.8rem;
+    color: #94A3B8;
+    font-weight: 500;
+  }
 
-  .plan-desc { font-size: 0.875rem; color: var(--color-text-muted); margin-bottom: 1.25rem; }
+  .price-desc {
+    font-size: 0.8rem;
+    color: #475569;
+    line-height: 1.6;
+  }
 
   .feature-list {
     list-style: none;
@@ -310,65 +549,117 @@ const { blocks = [] } = Astro.props;
     margin: 0 0 1.5rem;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.6rem;
+    border-top: 1px solid #F1F5F9;
+    padding-top: 1.25rem;
   }
 
   .feature-list li {
     font-size: 0.875rem;
+    color: #475569;
     display: flex;
-    gap: 0.5rem;
+    gap: 0.6rem;
+    align-items: flex-start;
   }
 
-  .feature-list span { color: var(--color-primary); flex-shrink: 0; }
+  .check {
+    color: #059669;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 0.05rem;
+  }
 
-  .plan-cta {
+  .plan-btn {
     display: block;
     text-align: center;
-    padding: 0.6rem 1rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
+    padding: 0.65rem 1rem;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
     font-size: 0.875rem;
     font-weight: 600;
-    transition: border-color 0.15s, background 0.15s;
+    color: #0F172A;
+    background: #fff;
+    transition: border-color 150ms, background 150ms;
   }
 
-  .plan-cta:hover { border-color: var(--color-text-muted); }
+  .plan-btn:hover { border-color: #94A3B8; background: #F8FAFC; }
 
-  .plan-cta--primary {
-    background: var(--color-primary);
-    color: var(--color-primary-fg);
-    border-color: var(--color-primary);
+  .plan-btn--primary {
+    background: #2563EB;
+    color: #fff;
+    border-color: #2563EB;
+    box-shadow: 0 1px 3px rgba(37,99,235,.3);
   }
 
-  .plan-cta--primary:hover { background: var(--color-primary-hover); border-color: var(--color-primary-hover); }
+  .plan-btn--primary:hover { background: #1D4ED8; border-color: #1D4ED8; }
 
-  /* ---- FAQ ---- */
-  .faq { background: var(--color-bg-subtle); }
+  /* ===================================================
+     FAQ
+  =================================================== */
+  .faq { background: #fff; }
 
   .faq-list {
-    max-width: 720px;
+    max-width: 680px;
     margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
+    border: 1px solid #E2E8F0;
+    border-radius: 16px;
+    overflow: hidden;
   }
 
   .faq-item {
-    border-bottom: 1px solid var(--color-border);
-    padding: 1.25rem 0;
+    padding: 1.4rem 1.75rem;
+    border-bottom: 1px solid #F1F5F9;
   }
 
-  .faq-item:first-child { border-top: 1px solid var(--color-border); }
+  .faq-item:last-child { border-bottom: none; }
 
   dt {
-    font-weight: 600;
-    margin-bottom: 0.5rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #0F172A;
+    margin-bottom: 0.6rem;
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+
+  .faq-q {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    background: #2563EB;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    border-radius: 6px;
+    flex-shrink: 0;
+    margin-top: 0.05rem;
   }
 
   dd {
     margin: 0;
-    font-size: 0.9rem;
-    color: var(--color-text-muted);
+    padding-left: calc(22px + 0.75rem);
+    font-size: 0.875rem;
+    color: #475569;
     line-height: 1.7;
+  }
+
+  /* ===================================================
+     レスポンシブ
+  =================================================== */
+  @media (max-width: 768px) {
+    section { padding: 3.5rem 0; }
+
+    .hero { padding: 4rem 0 3.5rem; }
+    .hero h1 { font-size: clamp(1.75rem, 7vw, 2.5rem); }
+    .hero-trust { gap: 0.75rem; }
+
+    .features-grid,
+    .testimonials-grid,
+    .pricing-grid { grid-template-columns: 1fr; }
+
+    .section-header h2 { font-size: 1.5rem; }
   }
 </style>
