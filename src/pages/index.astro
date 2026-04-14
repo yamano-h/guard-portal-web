@@ -1,0 +1,43 @@
+---
+import { getEmDashEntry } from "emdash";
+import Base from "../layouts/Base.astro";
+import MarketingBlocks from "../components/MarketingBlocks.astro";
+
+const page = await getEmDashEntry("pages", "home");
+---
+
+<Base
+  title={page?.data.seoTitle ?? undefined}
+  description={page?.data.seoDescription ?? undefined}
+>
+  {page ? (
+    <MarketingBlocks blocks={page.data.content} />
+  ) : (
+    <div class="empty-state">
+      <h1>ガードポータルへようこそ</h1>
+      <p>管理画面でホームページのコンテンツを編集してください。</p>
+      <a href="/admin">管理画面を開く →</a>
+    </div>
+  )}
+</Base>
+
+<style>
+  .empty-state {
+    text-align: center;
+    padding: 6rem var(--container-px);
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .empty-state h1 { font-size: 1.75rem; }
+
+  .empty-state p {
+    color: var(--color-text-muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .empty-state a {
+    color: var(--color-primary);
+    font-weight: 600;
+  }
+</style>

@@ -1,0 +1,187 @@
+---
+import { getEmDashCollection, getEmDashEntry } from "emdash";
+import { PortableText } from "emdash/components";
+import Base from "../../layouts/Base.astro";
+
+export async function getStaticPaths() {
+  const { entries: posts } = await getEmDashCollection("posts");
+  return posts.map((post) => ({
+    params: { slug: post.data.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const post = await getEmDashEntry("posts", slug);
+
+if (!post) {
+  return Astro.redirect("/404");
+}
+
+function formatDate(dateStr: string) {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("ja-JP", { year: "numeric", month: "long", day: "numeric" });
+}
+---
+
+<Base
+  title={post.data.seoTitle ?? post.data.title}
+  description={post.data.seoDescription ?? post.data.excerpt ?? undefined}
+>
+  <article class="post">
+    <header class="post-header">
+      <div class="container">
+        {post.data.category && (
+          <a href="/blog" class="back-link">← ブログ一覧</a>
+          <span class="category">{post.data.category}</span>
+        )}
+        {!post.data.category && (
+          <a href="/blog" class="back-link">← ブログ一覧</a>
+        )}
+        <h1>{post.data.title}</h1>
+        {post.data.publishedAt && (
+          <time datetime={post.data.publishedAt} class="date">
+            {formatDate(post.data.publishedAt)}
+          </time>
+        )}
+      </div>
+    </header>
+
+    <div class="post-body">
+      <div class="container">
+        <div class="prose">
+          {post.data.content && (
+            <PortableText value={post.data.content} />
+          )}
+        </div>
+
+        <div class="post-footer">
+          <a href="/blog" class="back-btn">← ブログ一覧に戻る</a>
+          <div class="cta-box">
+            <p>ガードポータルで書類管理を効率化しませんか？</p>
+            <a href="/contact" class="cta-btn">無料トライアルを始める</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .post-header {
+    padding: 3rem 0 2rem;
+    background: var(--color-bg-subtle);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .back-link {
+    display: inline-block;
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    margin-bottom: 0.75rem;
+    transition: color 0.15s;
+  }
+
+  .back-link:hover { color: var(--color-primary); }
+
+  .category {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.75rem;
+    margin-left: 1rem;
+  }
+
+  .post-header h1 {
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+    margin-bottom: 0.75rem;
+  }
+
+  .date {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+  }
+
+  .post-body { padding: 3rem 0 6rem; }
+
+  .prose {
+    max-width: 720px;
+    margin: 0 auto;
+    font-size: 1rem;
+    line-height: 1.8;
+  }
+
+  .prose :global(h2) {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 2.5rem 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--color-border);
+  }
+
+  .prose :global(h3) {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin: 2rem 0 0.75rem;
+  }
+
+  .prose :global(p) {
+    margin: 0 0 1.25rem;
+    color: var(--color-text);
+  }
+
+  .prose :global(ul), .prose :global(ol) {
+    margin: 0 0 1.25rem;
+    padding-left: 1.5rem;
+  }
+
+  .prose :global(li) { margin-bottom: 0.4rem; }
+
+  .prose :global(a) { color: var(--color-primary); text-decoration: underline; }
+
+  .post-footer {
+    max-width: 720px;
+    margin: 3rem auto 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .back-btn {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    transition: color 0.15s;
+  }
+
+  .back-btn:hover { color: var(--color-primary); }
+
+  .cta-box {
+    background: var(--color-bg-subtle);
+    border: 1px solid var(--color-border);
+    border-radius: calc(var(--radius) * 2);
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .cta-box p { margin: 0; font-weight: 600; }
+
+  .cta-btn {
+    padding: 0.6rem 1.25rem;
+    background: var(--color-primary);
+    color: var(--color-primary-fg);
+    border-radius: var(--radius);
+    font-weight: 600;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    transition: background 0.15s;
+  }
+
+  .cta-btn:hover { background: var(--color-primary-hover); }
+</style>

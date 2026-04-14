@@ -1,0 +1,447 @@
+{
+  "version": "1",
+  "label": "ガードポータル",
+  "settings": {
+    "title": "ガードポータル",
+    "tagline": "警備業の書類管理をかんたんに",
+    "language": "ja"
+  },
+  "collections": [
+    {
+      "slug": "pages",
+      "label": "ページ",
+      "singular": "ページ",
+      "drafts": true,
+      "revisions": true,
+      "fields": [
+        { "name": "title", "label": "タイトル", "type": "string", "required": true },
+        { "name": "content", "label": "コンテンツ", "type": "portableText" },
+        { "name": "seoTitle", "label": "SEOタイトル", "type": "string" },
+        { "name": "seoDescription", "label": "SEO説明文", "type": "string" }
+      ]
+    },
+    {
+      "slug": "posts",
+      "label": "ブログ記事",
+      "singular": "ブログ記事",
+      "drafts": true,
+      "revisions": true,
+      "fields": [
+        { "name": "title", "label": "タイトル", "type": "string", "required": true },
+        { "name": "slug", "label": "スラッグ", "type": "string", "required": true },
+        { "name": "publishedAt", "label": "公開日", "type": "date" },
+        { "name": "excerpt", "label": "概要", "type": "string" },
+        { "name": "content", "label": "本文", "type": "portableText" },
+        { "name": "category", "label": "カテゴリ", "type": "string" },
+        { "name": "seoTitle", "label": "SEOタイトル", "type": "string" },
+        { "name": "seoDescription", "label": "SEO説明文", "type": "string" }
+      ]
+    }
+  ],
+  "menus": [
+    {
+      "slug": "primary",
+      "label": "メインナビゲーション",
+      "items": [
+        { "label": "機能紹介", "url": "/#features" },
+        { "label": "料金プラン", "url": "/pricing" },
+        { "label": "ブログ", "url": "/blog" },
+        { "label": "お問い合わせ", "url": "/contact" }
+      ]
+    }
+  ],
+  "entries": [
+    {
+      "collection": "pages",
+      "slug": "home",
+      "status": "published",
+      "data": {
+        "title": "Home",
+        "seoTitle": "ガードポータル — 警備業の書類管理をかんたんに",
+        "seoDescription": "警備会社向けの法定書類管理クラウドシステム。テンプレート管理・電子申請・法改正対応をオールインワンで提供します。",
+        "content": [
+          {
+            "_type": "marketing.hero",
+            "headline": "警備業の書類管理、\nもっとかんたんに",
+            "subheadline": "警備会社向けの法定書類管理クラウドシステム。テンプレート管理から電子申請・電子署名まで、警備業法対応をオールインワンで。",
+            "primaryCta": { "label": "無料で試す", "url": "/contact" },
+            "secondaryCta": { "label": "デモを見る", "url": "/contact" }
+          },
+          {
+            "_type": "marketing.features",
+            "headline": "ガードポータルの機能",
+            "subheadline": "警備会社が抱える書類管理の課題をまるごと解決します。",
+            "items": [
+              {
+                "icon": "file-text",
+                "title": "テンプレート管理",
+                "description": "警備業法に準拠した書類テンプレートを一元管理。必要な書類をすぐに作成・出力できます。"
+              },
+              {
+                "icon": "send",
+                "title": "電子申請",
+                "description": "各種申請書類をペーパーレスで作成・提出。行政手続きのデジタル化をサポートします。"
+              },
+              {
+                "icon": "refresh-cw",
+                "title": "法改正対応",
+                "description": "警備業法の改正情報をいち早くキャッチし、テンプレートを自動更新。常に最新の法令に対応した書類を維持します。"
+              },
+              {
+                "icon": "pen-tool",
+                "title": "電子署名",
+                "description": "クラウド完結で電子署名・サインオフが可能。印鑑・郵送コストを大幅に削減します。"
+              },
+              {
+                "icon": "users",
+                "title": "チーム管理",
+                "description": "部署・担当者別に権限を細かく設定。複数拠点の書類管理も一つのシステムで対応できます。"
+              },
+              {
+                "icon": "code",
+                "title": "API連携",
+                "description": "既存の勤怠管理・給与計算システムとシームレスに連携。データ入力の二重手間を解消します。"
+              }
+            ]
+          },
+          {
+            "_type": "marketing.testimonials",
+            "headline": "導入企業の声",
+            "items": [
+              {
+                "quote": "書類の作成時間が以前の3分の1になりました。法改正のたびに慌てる必要がなくなり、現場業務に集中できています。",
+                "author": "山田 健一",
+                "role": "総務部長",
+                "company": "東都警備株式会社"
+              },
+              {
+                "quote": "複数拠点の書類を一元管理できるようになり、監査対応もスムーズになりました。サポートも迅速で安心して使えます。",
+                "author": "田中 幸子",
+                "role": "コンプライアンス担当",
+                "company": "セキュリティガード株式会社"
+              },
+              {
+                "quote": "電子署名機能のおかげで、遠方の取引先との契約もクラウドで完結できるようになりました。導入して本当に良かったです。",
+                "author": "鈴木 正樹",
+                "role": "代表取締役",
+                "company": "ミライ警備サービス株式会社"
+              }
+            ]
+          },
+          {
+            "_type": "marketing.faq",
+            "headline": "よくあるご質問",
+            "items": [
+              {
+                "question": "導入までどれくらいかかりますか？",
+                "answer": "最短3営業日でご利用開始いただけます。初期設定は弊社サポートチームがサポートいたします。"
+              },
+              {
+                "question": "既存の書類データを移行できますか？",
+                "answer": "Excel・Word・PDFなど既存の書類データをインポートできます。移行支援サービスもご用意しています。"
+              },
+              {
+                "question": "サポート体制はどうなっていますか？",
+                "answer": "平日9:00〜18:00にチャット・メール・電話でサポートいたします。エンタープライズプランでは専任サポートを提供します。"
+              },
+              {
+                "question": "無料トライアルはありますか？",
+                "answer": "30日間の無料トライアルをご用意しています。クレジットカード不要でお申し込みいただけます。"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "collection": "pages",
+      "slug": "pricing",
+      "status": "published",
+      "data": {
+        "title": "料金プラン",
+        "seoTitle": "料金プラン — ガードポータル",
+        "seoDescription": "ガードポータルの料金プラン。フリー・スタンダード・エンタープライズの3プランからお選びください。",
+        "content": [
+          {
+            "_type": "marketing.hero",
+            "headline": "シンプルな料金プラン",
+            "subheadline": "会社の規模やニーズに合わせてお選びください。すべてのプランで30日間の無料トライアルをご利用いただけます。"
+          },
+          {
+            "_type": "marketing.pricing",
+            "headline": "料金プラン",
+            "items": [
+              {
+                "name": "フリー",
+                "price": "¥0",
+                "period": "永久無料",
+                "description": "小規模な警備会社の書類管理を始めるのに最適なプランです。",
+                "features": [
+                  "書類テンプレート 10件まで",
+                  "ユーザー 2名まで",
+                  "ストレージ 1GB",
+                  "メールサポート"
+                ],
+                "cta": { "label": "無料で始める", "url": "/contact" }
+              },
+              {
+                "name": "スタンダード",
+                "price": "¥9,800",
+                "period": "月/社",
+                "description": "成長中の警備会社に必要な機能をすべて備えたスタンダードプランです。",
+                "features": [
+                  "書類テンプレート 無制限",
+                  "ユーザー 20名まで",
+                  "ストレージ 50GB",
+                  "電子署名",
+                  "API連携",
+                  "チャット・電話サポート"
+                ],
+                "highlighted": true,
+                "cta": { "label": "30日間無料で試す", "url": "/contact" }
+              },
+              {
+                "name": "エンタープライズ",
+                "price": "要相談",
+                "period": "",
+                "description": "大規模警備会社・グループ企業向けにカスタマイズされたプランです。",
+                "features": [
+                  "ユーザー 無制限",
+                  "ストレージ 無制限",
+                  "専任サポート担当者",
+                  "カスタムAPI連携",
+                  "SLA保証",
+                  "オンプレミス対応"
+                ],
+                "cta": { "label": "お問い合わせ", "url": "/contact" }
+              }
+            ]
+          },
+          {
+            "_type": "marketing.faq",
+            "headline": "料金に関するよくある質問",
+            "items": [
+              {
+                "question": "プランの変更はいつでもできますか？",
+                "answer": "はい、いつでもアップグレード・ダウングレードが可能です。変更は翌月から適用されます。"
+              },
+              {
+                "question": "支払い方法は何が使えますか？",
+                "answer": "クレジットカード（Visa・Mastercard・JCB・American Express）および銀行振込に対応しています。"
+              },
+              {
+                "question": "年払いの割引はありますか？",
+                "answer": "年払いをご選択いただくと、月払いと比較して2ヶ月分お得になります（約16%割引）。"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "collection": "pages",
+      "slug": "contact",
+      "status": "published",
+      "data": {
+        "title": "お問い合わせ",
+        "seoTitle": "お問い合わせ — ガードポータル",
+        "seoDescription": "ガードポータルへのお問い合わせ・デモのご依頼はこちらから。",
+        "content": [
+          {
+            "_type": "marketing.hero",
+            "headline": "お問い合わせ・デモのご依頼",
+            "subheadline": "製品に関するご質問・導入のご相談・デモのご依頼など、お気軽にお問い合わせください。担当者より2営業日以内にご返信いたします。"
+          }
+        ]
+      }
+    },
+    {
+      "collection": "posts",
+      "slug": "what-is-security-guard-law",
+      "status": "published",
+      "data": {
+        "title": "警備業法とは？必要な書類を徹底解説",
+        "slug": "what-is-security-guard-law",
+        "publishedAt": "2026-04-01",
+        "category": "法令解説",
+        "excerpt": "警備業法で定められた書類の種類、作成・保管義務、違反した場合の罰則などをわかりやすく解説します。",
+        "seoTitle": "警備業法とは？必要な書類を徹底解説 | ガードポータルブログ",
+        "seoDescription": "警備業法で定められた必要書類（警備員名簿・教育記録・業務報告書など）の作成・保管義務と実務対応を解説します。",
+        "content": [
+          {
+            "_type": "block",
+            "style": "normal",
+            "children": [{ "_type": "span", "text": "警備業法（昭和47年法律第117号）は、警備業の適正な運営と警備員の資質向上を目的とした法律です。警備会社を運営するうえで、各種書類の作成・保管・提出が義務付けられており、違反した場合は行政処分や罰則の対象となります。" }]
+          },
+          {
+            "_type": "block",
+            "style": "h2",
+            "children": [{ "_type": "span", "text": "1. 警備業法で必要な主な書類" }]
+          },
+          {
+            "_type": "block",
+            "style": "normal",
+            "children": [{ "_type": "span", "text": "警備業法では、大きく分けて「認定・届出書類」「警備員に関する書類」「業務に関する書類」の3種類が求められます。" }]
+          },
+          {
+            "_type": "block",
+            "style": "h3",
+            "children": [{ "_type": "span", "text": "認定・届出書類" }]
+          },
+          {
+            "_type": "block",
+            "style": "normal",
+            "children": [{ "_type": "span", "text": "警備業を営むには都道府県公安委員会への認定申請が必要です。申請書類には、警備業認定申請書・誓約書・略歴書・財産的基礎確認書類などが含まれます。" }]
+          },
+          {
+            "_type": "block",
+            "style": "h3",
+            "children": [{ "_type": "span", "text": "警備員に関する書類" }]
+          },
+          {
+            "_type": "block",
+            "style": "normal",
+            "children": [{ "_type": "span", "text": "警備員名簿・教育記録簿・検定合格証のコピーなど、採用から退職まで一定期間の保管義務があります。特に教育記録は、新任教育・現任教育の実施を証明する重要書類です。" }]
+          },
+          {
+            "_type": "block",
+            "style": "h3",
+            "children": [{ "_type": "span", "text": "業務に関する書類" }]
+          },
+          {
+            "_type": "block",
+            "style": "normal",
+            "children": [{ "_type": "span", "text": "警備業務実施計画書・業務報告書・苦情処理記録などが該当します。これらは警備委託契約ごとに作成・管理する必要があります。" }]
+          },
+          {
+            "_type": "block",
+            "style": "h2",
+            "children": [{ "_type": "span", "text": "2. ガードポータルで書類管理を効率化する" }]
+          },
+          {
+            "_type": "block",
+            "style": "normal",
+            "children": [{ "_type": "span", "text": "ガードポータルでは、これらの法定書類テンプレートをあらかじめ用意しています。法改正のたびに自動更新されるため、常に最新の書式で対応が可能です。30日間の無料トライアルでぜひお試しください。" }]
+          }
+        ]
+      }
+    },
+    {
+      "collection": "posts",
+      "slug": "dx-for-security-companies",
+      "status": "published",
+      "data": {
+        "title": "警備会社のDX推進：書類管理のデジタル化メリット",
+        "slug": "dx-for-security-companies",
+        "publishedAt": "2026-04-05",
+        "category": "DX推進",
+        "excerpt": "書類管理をデジタル化することで得られる時間・コスト削減効果と、成功事例をご紹介します。",
+        "seoTitle": "警備会社のDX推進：書類管理のデジタル化メリット | ガードポータルブログ",
+        "seoDescription": "警備会社が書類管理をデジタル化するメリット（コスト削減・ミス防止・法改正対応）と成功事例を解説します。",
+        "content": [
+          {
+            "_type": "block",
+            "style": "normal",
+            "children": [{ "_type": "span", "text": "警備業界では、まだ多くの企業が紙ベースの書類管理を続けています。しかし、人手不足・法改正への対応コスト増大・テレワーク推進の流れの中で、書類管理のデジタル化（DX）は急務となっています。" }]
+          },
+          {
+            "_type": "block",
+            "style": "h2",
+            "children": [{ "_type": "span", "text": "デジタル化による主なメリット" }]
+          },
+          {
+            "_type": "block",
+            "style": "h3",
+            "children": [{ "_type": "span", "text": "1. 作業時間の大幅削減" }]
+          },
+          {
+            "_type": "block",
+            "style": "normal",
+            "children": [{ "_type": "span", "text": "書類テンプレートの活用により、書類作成時間を最大70%短縮できます。警備員情報をシステムに登録しておけば、各種書類に自動反映されます。" }]
+          },
+          {
+            "_type": "block",
+            "style": "h3",
+            "children": [{ "_type": "span", "text": "2. 人的ミスの防止" }]
+          },
+          {
+            "_type": "block",
+            "style": "normal",
+            "children": [{ "_type": "span", "text": "手入力によるミスや記載漏れを防げます。必須項目チェックや書式バリデーションにより、不備のある書類提出を未然に防止します。" }]
+          },
+          {
+            "_type": "block",
+            "style": "h3",
+            "children": [{ "_type": "span", "text": "3. 法改正への即時対応" }]
+          },
+          {
+            "_type": "block",
+            "style": "normal",
+            "children": [{ "_type": "span", "text": "法改正があってもシステム側でテンプレートが自動更新されるため、最新の書式に切り替えるための作業コストがゼロになります。" }]
+          },
+          {
+            "_type": "block",
+            "style": "h2",
+            "children": [{ "_type": "span", "text": "まとめ" }]
+          },
+          {
+            "_type": "block",
+            "style": "normal",
+            "children": [{ "_type": "span", "text": "書類管理のデジタル化は、警備会社の生産性向上とコンプライアンス強化の両立を可能にします。ガードポータルはその第一歩として最適なソリューションです。ぜひ無料トライアルでお試しください。" }]
+          }
+        ]
+      }
+    },
+    {
+      "collection": "posts",
+      "slug": "security-education-records",
+      "status": "published",
+      "data": {
+        "title": "警備員の教育記録、正しい保管方法と管理のポイント",
+        "slug": "security-education-records",
+        "publishedAt": "2026-04-10",
+        "category": "実務解説",
+        "excerpt": "警備業法で義務付けられた教育記録の作成・保管方法と、監査対応のポイントを実務目線で解説します。",
+        "seoTitle": "警備員の教育記録、正しい保管方法と管理のポイント | ガードポータルブログ",
+        "seoDescription": "警備業法で義務付けられた警備員教育記録（新任・現任教育）の正しい保管期間・方法と監査対応のポイントを解説。",
+        "content": [
+          {
+            "_type": "block",
+            "style": "normal",
+            "children": [{ "_type": "span", "text": "警備業法施行規則では、警備員に対する教育の実施を記録した「教育記録簿」の作成・保管が義務付けられています。監査の際にも重要な書類となるため、正しい管理方法を理解しておくことが重要です。" }]
+          },
+          {
+            "_type": "block",
+            "style": "h2",
+            "children": [{ "_type": "span", "text": "教育記録簿に記載すべき内容" }]
+          },
+          {
+            "_type": "block",
+            "style": "normal",
+            "children": [{ "_type": "span", "text": "教育記録簿には、①教育実施日時・場所、②教育担当者氏名、③受講した警備員氏名・認定番号、④教育内容（科目・時間数）、⑤受講者署名を記載する必要があります。" }]
+          },
+          {
+            "_type": "block",
+            "style": "h2",
+            "children": [{ "_type": "span", "text": "保管期間と保管方法" }]
+          },
+          {
+            "_type": "block",
+            "style": "normal",
+            "children": [{ "_type": "span", "text": "教育記録簿は、当該警備員の退職後も3年間保管する義務があります。電磁的記録による保存も認められていますが、原本性・完全性を担保する適切な管理が求められます。" }]
+          },
+          {
+            "_type": "block",
+            "style": "h2",
+            "children": [{ "_type": "span", "text": "ガードポータルでの管理" }]
+          },
+          {
+            "_type": "block",
+            "style": "normal",
+            "children": [{ "_type": "span", "text": "ガードポータルでは、教育記録簿テンプレートを標準搭載しています。警備員マスターと連携しているため、氏名・認定番号などを自動入力でき、電子署名による受講確認も可能です。退職後の保管期限もシステムが自動管理します。" }]
+          }
+        ]
+      }
+    }
+  ]
+}

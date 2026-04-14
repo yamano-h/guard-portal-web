@@ -1,0 +1,338 @@
+---
+import { getEmDashMenu, getEmDashSettings, EmDashHead } from "emdash/components";
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+}
+
+const { title, description, image } = Astro.props;
+
+const settings = await getEmDashSettings();
+const menuItems = await getEmDashMenu("primary");
+
+const siteTitle = settings?.title ?? "ガードポータル";
+const siteTagline = settings?.tagline ?? "警備業の書類管理をかんたんに";
+const pageTitle = title && title !== "Home" ? `${title} — ${siteTitle}` : `${siteTitle} — ${siteTagline}`;
+const pageDescription = description ?? "警備会社向けの法定書類管理クラウドシステム。テンプレート管理・電子申請・法改正対応をオールインワンで提供します。";
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    {image && <meta property="og:image" content={image} />}
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <EmDashHead />
+    <script is:inline>
+      (function () {
+        const stored = localStorage.getItem("theme");
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const theme = stored ?? (prefersDark ? "dark" : "light");
+        document.documentElement.setAttribute("data-theme", theme);
+      })();
+    </script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <a href="/" class="logo" aria-label={siteTitle}>
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <rect width="32" height="32" rx="8" fill="#1D4ED8"/>
+            <path d="M8 10h16M8 16h10M8 22h13" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+          <span>{siteTitle}</span>
+        </a>
+        <nav aria-label="メインナビゲーション">
+          <ul>
+            {menuItems.map((item) => (
+              <li>
+                <a href={item.url}>{item.label}</a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <div class="header-actions">
+          <a href="/admin" class="btn-ghost">管理画面</a>
+          <a href="/contact" class="btn-primary">無料で試す</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a href="/" class="logo" aria-label={siteTitle}>
+              <svg width="28" height="28" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+                <rect width="32" height="32" rx="8" fill="#1D4ED8"/>
+                <path d="M8 10h16M8 16h10M8 22h13" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+              </svg>
+              <span>{siteTitle}</span>
+            </a>
+            <p>{siteTagline}</p>
+          </div>
+          <div class="footer-links">
+            <h3>プロダクト</h3>
+            <ul>
+              <li><a href="/#features">機能紹介</a></li>
+              <li><a href="/pricing">料金プラン</a></li>
+              <li><a href="/contact">デモ依頼</a></li>
+            </ul>
+          </div>
+          <div class="footer-links">
+            <h3>リソース</h3>
+            <ul>
+              <li><a href="/blog">ブログ</a></li>
+              <li><a href="/blog/what-is-security-guard-law">警備業法解説</a></li>
+            </ul>
+          </div>
+          <div class="footer-links">
+            <h3>サポート</h3>
+            <ul>
+              <li><a href="/contact">お問い合わせ</a></li>
+              <li><a href="/admin">管理画面ログイン</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; {new Date().getFullYear()} {siteTitle}. All rights reserved.</p>
+          <div class="theme-switcher">
+            <button onclick="document.documentElement.setAttribute('data-theme','light');localStorage.setItem('theme','light')" aria-label="ライトモード">☀</button>
+            <button onclick="document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('theme','dark')" aria-label="ダークモード">☾</button>
+          </div>
+          <p class="powered-by">Powered by <a href="https://emdashcms.com" target="_blank" rel="noopener">EmDash</a></p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --color-bg: #ffffff;
+    --color-bg-subtle: #f8fafc;
+    --color-border: #e2e8f0;
+    --color-text: #0f172a;
+    --color-text-muted: #64748b;
+    --color-primary: #1d4ed8;
+    --color-primary-hover: #1e40af;
+    --color-primary-fg: #ffffff;
+    --font-sans: "Noto Sans JP", sans-serif;
+    --radius: 0.5rem;
+    --container-max: 1200px;
+    --container-px: 1.5rem;
+  }
+
+  [data-theme="dark"] {
+    --color-bg: #0f172a;
+    --color-bg-subtle: #1e293b;
+    --color-border: #334155;
+    --color-text: #f1f5f9;
+    --color-text-muted: #94a3b8;
+    --color-primary: #3b82f6;
+    --color-primary-hover: #60a5fa;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html { font-family: var(--font-sans); scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.6;
+  }
+
+  .container {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 0 var(--container-px);
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  h1, h2, h3, h4 { line-height: 1.3; margin: 0 0 0.75em; }
+
+  img { max-width: 100%; height: auto; }
+</style>
+
+<style>
+  /* Header */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--color-bg) 90%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .site-header .container {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    height: 4rem;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  nav { flex: 1; }
+
+  nav ul {
+    display: flex;
+    gap: 0.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  nav a {
+    padding: 0.4rem 0.75rem;
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    transition: color 0.15s, background 0.15s;
+  }
+
+  nav a:hover {
+    color: var(--color-text);
+    background: var(--color-bg-subtle);
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+  }
+
+  .btn-ghost {
+    padding: 0.4rem 0.75rem;
+    border-radius: var(--radius);
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    transition: color 0.15s;
+  }
+
+  .btn-ghost:hover { color: var(--color-text); }
+
+  .btn-primary {
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius);
+    font-size: 0.875rem;
+    font-weight: 600;
+    background: var(--color-primary);
+    color: var(--color-primary-fg);
+    transition: background 0.15s;
+  }
+
+  .btn-primary:hover { background: var(--color-primary-hover); }
+
+  /* Footer */
+  .site-footer {
+    border-top: 1px solid var(--color-border);
+    background: var(--color-bg-subtle);
+    padding: 3rem 0 1.5rem;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 2rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .footer-brand .logo { margin-bottom: 0.75rem; }
+
+  .footer-brand p {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  .footer-links h3 {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .footer-links ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .footer-links a {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    transition: color 0.15s;
+  }
+
+  .footer-links a:hover { color: var(--color-text); }
+
+  .footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 1.5rem;
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .footer-bottom p { margin: 0; }
+
+  .theme-switcher { display: flex; gap: 0.5rem; }
+
+  .theme-switcher button {
+    background: none;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+    transition: border-color 0.15s;
+  }
+
+  .theme-switcher button:hover { border-color: var(--color-text); }
+
+  .powered-by a { color: var(--color-primary); }
+
+  @media (max-width: 768px) {
+    nav, .btn-ghost { display: none; }
+
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>

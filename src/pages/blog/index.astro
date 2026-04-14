@@ -1,0 +1,133 @@
+---
+import { getEmDashCollection } from "emdash";
+import Base from "../../layouts/Base.astro";
+
+const { entries: posts } = await getEmDashCollection("posts");
+
+const sortedPosts = posts
+  .filter((p) => p.data.status === "published" || p.data.publishedAt)
+  .sort((a, b) => {
+    const dateA = a.data.publishedAt ? new Date(a.data.publishedAt).getTime() : 0;
+    const dateB = b.data.publishedAt ? new Date(b.data.publishedAt).getTime() : 0;
+    return dateB - dateA;
+  });
+
+function formatDate(dateStr: string) {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("ja-JP", { year: "numeric", month: "long", day: "numeric" });
+}
+---
+
+<Base title="ブログ" description="警備業界のDX推進・書類管理・法令解説に関する情報をお届けします。">
+  <section class="blog-hero">
+    <div class="container">
+      <h1>ブログ</h1>
+      <p>警備業界のDX推進・書類管理・法令解説に関する情報をお届けします。</p>
+    </div>
+  </section>
+
+  <section class="blog-list">
+    <div class="container">
+      {sortedPosts.length === 0 ? (
+        <div class="empty">
+          <p>まだ記事がありません。管理画面から記事を追加してください。</p>
+          <a href="/admin">管理画面を開く →</a>
+        </div>
+      ) : (
+        <div class="posts-grid">
+          {sortedPosts.map((post) => (
+            <article class="post-card">
+              {post.data.category && (
+                <span class="category">{post.data.category}</span>
+              )}
+              <h2>
+                <a href={`/blog/${post.data.slug}`}>{post.data.title}</a>
+              </h2>
+              {post.data.excerpt && (
+                <p class="excerpt">{post.data.excerpt}</p>
+              )}
+              {post.data.publishedAt && (
+                <time datetime={post.data.publishedAt} class="date">
+                  {formatDate(post.data.publishedAt)}
+                </time>
+              )}
+            </article>
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .blog-hero {
+    padding: 4rem 0 2.5rem;
+    background: var(--color-bg-subtle);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .blog-hero h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+
+  .blog-hero p { color: var(--color-text-muted); margin: 0; }
+
+  .blog-list { padding: 3rem 0 6rem; }
+
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .post-card {
+    border: 1px solid var(--color-border);
+    border-radius: calc(var(--radius) * 2);
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .post-card:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 2px 12px color-mix(in srgb, var(--color-primary) 10%, transparent);
+  }
+
+  .category {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .post-card h2 { font-size: 1.1rem; margin: 0; }
+
+  .post-card h2 a { color: var(--color-text); transition: color 0.15s; }
+
+  .post-card h2 a:hover { color: var(--color-primary); }
+
+  .excerpt {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    margin: 0;
+    line-height: 1.6;
+    flex: 1;
+  }
+
+  .date {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    margin-top: 0.25rem;
+  }
+
+  .empty {
+    text-align: center;
+    padding: 4rem 0;
+  }
+
+  .empty p { color: var(--color-text-muted); margin-bottom: 1rem; }
+
+  .empty a { color: var(--color-primary); font-weight: 600; }
+</style>
