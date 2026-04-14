@@ -29,6 +29,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Inject D1 database_id
+        run: |
+          sed -i 's/"database_id": "local"/"database_id": "${{ secrets.D1_DATABASE_ID }}"/' wrangler.jsonc
+
       - name: Build
         run: npm run build
 
