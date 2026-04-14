@@ -2,5 +2,5 @@
 interface Env {
   DB: D1Database;
   MEDIA: R2Bucket;
-  PLUGIN_LOADER: Fetcher;
+  LOADER: Fetcher;
 }

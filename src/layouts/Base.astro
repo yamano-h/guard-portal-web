@@ -1,5 +1,9 @@
 ---
-import { getEmDashMenu, getEmDashSettings, EmDashHead } from "emdash/components";
+import { getMenu, getSiteSettings } from "emdash";
+import { EmDashHead } from "emdash/ui";
+import { createPublicPageContext } from "emdash/page";
+import { Font } from "astro:assets";
+import "../styles/theme.css";
 
 interface Props {
   title?: string;
@@ -8,14 +12,30 @@ interface Props {
 }
 
 const { title, description, image } = Astro.props;
+const settings = await getSiteSettings();
+const siteTitle = settings?.title || "ガードポータル";
+const fullTitle = title ? `${title} — ${siteTitle}` : siteTitle;
+const siteDescription =
+  settings?.tagline || "警備業の書類管理をかんたんに";
+const siteLogo = (settings?.logo as any)?.url
+  ? (settings.logo as { mediaId: string; alt?: string; url: string })
+  : null;
+const siteFavicon = (settings?.favicon as any)?.url ?? null;
 
-const settings = await getEmDashSettings();
-const menuItems = await getEmDashMenu("primary");
+const menu = await getMenu("primary");
 
-const siteTitle = settings?.title ?? "ガードポータル";
-const siteTagline = settings?.tagline ?? "警備業の書類管理をかんたんに";
-const pageTitle = title && title !== "Home" ? `${title} — ${siteTitle}` : `${siteTitle} — ${siteTagline}`;
-const pageDescription = description ?? "警備会社向けの法定書類管理クラウドシステム。テンプレート管理・電子申請・法改正対応をオールインワンで提供します。";
+const pageCtx = createPublicPageContext({
+  Astro,
+  kind: "custom",
+  pageType: "website",
+  title: fullTitle,
+  pageTitle: title ?? siteTitle,
+  description: description || siteDescription,
+  canonical: Astro.url.href,
+  image,
+  seo: { ogImage: image },
+  siteName: siteTitle,
+});
 ---
 
 <!doctype html>
@@ -23,50 +43,43 @@ const pageDescription = description ?? "警備会社向けの法定書類管理�
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{pageTitle}</title>
-    <meta name="description" content={pageDescription} />
-    {image && <meta property="og:image" content={image} />}
-    <meta property="og:title" content={pageTitle} />
-    <meta property="og:description" content={pageDescription} />
-    <meta property="og:type" content="website" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <EmDashHead />
+    <title>{fullTitle}</title>
+    {siteFavicon && <link rel="icon" href={siteFavicon} />}
+    {!siteFavicon && <link rel="icon" type="image/svg+xml" href="/favicon.svg" />}
+    <EmDashHead page={pageCtx} />
+    <Font cssVariable="--font-sans" preload />
     <script is:inline>
       (function () {
-        const stored = localStorage.getItem("theme");
-        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        const theme = stored ?? (prefersDark ? "dark" : "light");
-        document.documentElement.setAttribute("data-theme", theme);
+        var c = document.cookie;
+        var i = c.indexOf("theme=");
+        var theme = i >= 0 ? c.slice(i + 6).split(";")[0] : null;
+        if (theme === "dark" || theme === "light") {
+          document.documentElement.classList.add(theme);
+        } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+          document.documentElement.classList.add("dark");
+        }
       })();
     </script>
   </head>
   <body>
     <header class="site-header">
-      <div class="container">
-        <a href="/" class="logo" aria-label={siteTitle}>
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-            <rect width="32" height="32" rx="8" fill="#1D4ED8"/>
-            <path d="M8 10h16M8 16h10M8 22h13" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
-          </svg>
-          <span>{siteTitle}</span>
+      <nav class="nav">
+        <a href="/" class="site-logo">
+          {siteLogo
+            ? <img src={siteLogo.url} alt={siteLogo.alt || siteTitle} class="site-logo-img" />
+            : siteTitle
+          }
         </a>
-        <nav aria-label="メインナビゲーション">
-          <ul>
-            {menuItems.map((item) => (
-              <li>
-                <a href={item.url}>{item.label}</a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-        <div class="header-actions">
-          <a href="/admin" class="btn-ghost">管理画面</a>
-          <a href="/contact" class="btn-primary">無料で試す</a>
+        <div class="nav-links">
+          {menu?.items.map((item) => (
+            <a href={item.url} target={item.target}>{item.label}</a>
+          ))}
         </div>
-      </div>
+        <div class="nav-actions">
+          <a href="/_emdash/admin" class="nav-admin">管理画面</a>
+          <a href="/contact" class="nav-cta btn btn-primary">無料で試す</a>
+        </div>
+      </nav>
     </header>
 
     <main>
@@ -74,265 +87,369 @@ const pageDescription = description ?? "警備会社向けの法定書類管理�
     </main>
 
     <footer class="site-footer">
-      <div class="container">
-        <div class="footer-grid">
-          <div class="footer-brand">
-            <a href="/" class="logo" aria-label={siteTitle}>
-              <svg width="28" height="28" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-                <rect width="32" height="32" rx="8" fill="#1D4ED8"/>
-                <path d="M8 10h16M8 16h10M8 22h13" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
-              </svg>
-              <span>{siteTitle}</span>
-            </a>
-            <p>{siteTagline}</p>
-          </div>
-          <div class="footer-links">
-            <h3>プロダクト</h3>
-            <ul>
-              <li><a href="/#features">機能紹介</a></li>
-              <li><a href="/pricing">料金プラン</a></li>
-              <li><a href="/contact">デモ依頼</a></li>
-            </ul>
-          </div>
-          <div class="footer-links">
-            <h3>リソース</h3>
-            <ul>
-              <li><a href="/blog">ブログ</a></li>
-              <li><a href="/blog/what-is-security-guard-law">警備業法解説</a></li>
-            </ul>
-          </div>
-          <div class="footer-links">
-            <h3>サポート</h3>
-            <ul>
-              <li><a href="/contact">お問い合わせ</a></li>
-              <li><a href="/admin">管理画面ログイン</a></li>
-            </ul>
-          </div>
+      <div class="footer-content">
+        <div class="footer-brand">
+          <span class="footer-logo">{siteTitle}</span>
+          <p class="footer-tagline">{siteDescription}</p>
         </div>
-        <div class="footer-bottom">
-          <p>&copy; {new Date().getFullYear()} {siteTitle}. All rights reserved.</p>
-          <div class="theme-switcher">
-            <button onclick="document.documentElement.setAttribute('data-theme','light');localStorage.setItem('theme','light')" aria-label="ライトモード">☀</button>
-            <button onclick="document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('theme','dark')" aria-label="ダークモード">☾</button>
+        <div class="footer-links">
+          <div class="footer-col">
+            <h4>プロダクト</h4>
+            <a href="/#features">機能紹介</a>
+            <a href="/pricing">料金プラン</a>
           </div>
-          <p class="powered-by">Powered by <a href="https://emdashcms.com" target="_blank" rel="noopener">EmDash</a></p>
+          <div class="footer-col">
+            <h4>リソース</h4>
+            <a href="/blog">ブログ</a>
+            <a href="/blog/what-is-security-guard-law">警備業法解説</a>
+          </div>
+          <div class="footer-col">
+            <h4>サポート</h4>
+            <a href="/contact">お問い合わせ</a>
+            <a href="/_emdash/admin">管理画面ログイン</a>
+          </div>
         </div>
       </div>
+      <div class="footer-bottom">
+        <p>&copy; {new Date().getFullYear()} {siteTitle}. All rights reserved.</p>
+        <div class="theme-switcher">
+          <button type="button" class="theme-btn" data-theme="light" aria-label="ライトモード">Light</button>
+          <button type="button" class="theme-btn" data-theme="dark" aria-label="ダークモード">Dark</button>
+          <button type="button" class="theme-btn" data-theme="system" aria-label="システム設定">System</button>
+        </div>
+        <p class="footer-powered">
+          Powered by <a href="https://emdashcms.com" target="_blank" rel="noopener">EmDash</a>
+        </p>
+      </div>
     </footer>
+
+    <script>
+      const THEME_REGEX = /theme=([^;]+)/;
+      const themeBtns = document.querySelectorAll<HTMLButtonElement>(".theme-btn");
+      const root = document.documentElement;
+
+      function setTheme(theme: string) {
+        const secure = location.protocol === "https:" ? "; Secure" : "";
+        if (theme === "system") {
+          document.cookie = `theme=; path=/; max-age=0; SameSite=Lax${secure}`;
+          root.classList.remove("light", "dark");
+          if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            root.classList.add("dark");
+          }
+        } else {
+          document.cookie = `theme=${theme}; path=/; max-age=31536000; SameSite=Lax${secure}`;
+          root.classList.remove("light", "dark");
+          root.classList.add(theme);
+        }
+        updateActiveBtn(theme);
+      }
+
+      function updateActiveBtn(theme: string) {
+        themeBtns.forEach((btn) => {
+          btn.classList.toggle("active", btn.dataset.theme === theme);
+        });
+      }
+
+      function getStoredTheme(): string {
+        const match = document.cookie.match(THEME_REGEX);
+        return match ? match[1] : "system";
+      }
+
+      const storedTheme = getStoredTheme();
+      setTheme(storedTheme);
+
+      themeBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          setTheme(btn.dataset.theme || "system");
+        });
+      });
+
+      window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
+        if (getStoredTheme() === "system") {
+          root.classList.toggle("dark", e.matches);
+        }
+      });
+    </script>
   </body>
 </html>
 
 <style is:global>
-  :root {
-    --color-bg: #ffffff;
-    --color-bg-subtle: #f8fafc;
-    --color-border: #e2e8f0;
-    --color-text: #0f172a;
-    --color-text-muted: #64748b;
-    --color-primary: #1d4ed8;
-    --color-primary-hover: #1e40af;
-    --color-primary-fg: #ffffff;
-    --font-sans: "Noto Sans JP", sans-serif;
-    --radius: 0.5rem;
-    --container-max: 1200px;
-    --container-px: 1.5rem;
+  @layer base;
+
+  @layer base {
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --color-bg: #ffffff;
+      --color-text: #0f172a;
+      --color-muted: #64748b;
+      --color-border: #e2e8f0;
+      --color-surface: #f8fafc;
+      --color-primary: #1d4ed8;
+      --color-primary-dark: #1e40af;
+      --color-primary-light: #3b82f6;
+      --font-mono: ui-monospace, "SF Mono", monospace;
+      --font-size-sm: 0.875rem;
+      --font-size-base: 1rem;
+      --font-size-lg: 1.125rem;
+      --font-size-xl: 1.25rem;
+      --font-size-2xl: 1.5rem;
+      --font-size-3xl: 2rem;
+      --font-size-4xl: 2.5rem;
+      --font-size-5xl: 3.5rem;
+      --spacing-xs: 0.25rem;
+      --spacing-sm: 0.5rem;
+      --spacing-md: 1rem;
+      --spacing-lg: 1.5rem;
+      --spacing-xl: 2rem;
+      --spacing-2xl: 3rem;
+      --spacing-3xl: 4rem;
+      --spacing-4xl: 6rem;
+      --spacing-5xl: 8rem;
+      --wide-width: 1200px;
+      --radius-sm: 6px;
+      --radius: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+      --transition-fast: 150ms ease;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,.05);
+      --shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -4px rgba(0,0,0,.1);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not(.light) {
+        --color-bg: #0f172a;
+        --color-text: #f1f5f9;
+        --color-muted: #94a3b8;
+        --color-border: #334155;
+        --color-surface: #1e293b;
+        --color-primary: #3b82f6;
+        --color-primary-dark: #1d4ed8;
+        --color-primary-light: #60a5fa;
+      }
+    }
+
+    :root.dark {
+      --color-bg: #0f172a;
+      --color-text: #f1f5f9;
+      --color-muted: #94a3b8;
+      --color-border: #334155;
+      --color-surface: #1e293b;
+      --color-primary: #3b82f6;
+      --color-primary-dark: #1d4ed8;
+      --color-primary-light: #60a5fa;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-sans, "Noto Sans JP", sans-serif);
+      font-size: var(--font-size-base);
+      line-height: 1.6;
+      color: var(--color-text);
+      background: var(--color-bg);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    a { color: currentColor; text-decoration: none; }
+    img { max-width: 100%; height: auto; display: block; }
+    h1, h2, h3, h4, h5, h6 { font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; }
+    h1 { font-size: var(--font-size-5xl); }
+    h2 { font-size: var(--font-size-3xl); }
+    h3 { font-size: var(--font-size-2xl); }
+    h4 { font-size: var(--font-size-xl); }
+
+    .container { max-width: var(--wide-width); margin: 0 auto; padding: 0 var(--spacing-lg); }
+    .section { padding: var(--spacing-5xl) 0; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-sm) var(--spacing-lg);
+      font-family: inherit;
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background var(--transition-fast), transform var(--transition-fast);
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+
+    .btn-primary {
+      color: white;
+      background: var(--color-primary);
+      border: none;
+    }
+
+    .btn-primary:hover { background: var(--color-primary-dark); }
+
+    .btn-secondary {
+      color: var(--color-text);
+      background: transparent;
+      border: 1px solid var(--color-border);
+    }
+
+    .btn-secondary:hover { background: var(--color-surface); }
+
+    @media (max-width: 768px) {
+      h1 { font-size: var(--font-size-4xl); }
+      h2 { font-size: var(--font-size-2xl); }
+    }
   }
-
-  [data-theme="dark"] {
-    --color-bg: #0f172a;
-    --color-bg-subtle: #1e293b;
-    --color-border: #334155;
-    --color-text: #f1f5f9;
-    --color-text-muted: #94a3b8;
-    --color-primary: #3b82f6;
-    --color-primary-hover: #60a5fa;
-  }
-
-  *, *::before, *::after { box-sizing: border-box; }
-
-  html { font-family: var(--font-sans); scroll-behavior: smooth; }
-
-  body {
-    margin: 0;
-    background: var(--color-bg);
-    color: var(--color-text);
-    line-height: 1.6;
-  }
-
-  .container {
-    max-width: var(--container-max);
-    margin: 0 auto;
-    padding: 0 var(--container-px);
-  }
-
-  a { color: inherit; text-decoration: none; }
-
-  h1, h2, h3, h4 { line-height: 1.3; margin: 0 0 0.75em; }
-
-  img { max-width: 100%; height: auto; }
 </style>
 
 <style>
-  /* Header */
   .site-header {
     position: sticky;
     top: 0;
-    z-index: 50;
-    background: color-mix(in srgb, var(--color-bg) 90%, transparent);
-    backdrop-filter: blur(12px);
+    z-index: 100;
+    background: var(--color-bg);
     border-bottom: 1px solid var(--color-border);
   }
 
-  .site-header .container {
+  .nav {
+    max-width: var(--wide-width);
+    margin: 0 auto;
+    padding: var(--spacing-md) var(--spacing-lg);
     display: flex;
     align-items: center;
-    gap: 2rem;
-    height: 4rem;
+    gap: var(--spacing-lg);
   }
 
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 700;
-    font-size: 1.1rem;
+  .site-logo {
+    font-size: var(--font-size-xl);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--color-primary);
     flex-shrink: 0;
   }
 
-  nav { flex: 1; }
+  .site-logo-img { height: 32px; width: auto; }
 
-  nav ul {
+  .nav-links {
     display: flex;
-    gap: 0.25rem;
-    list-style: none;
-    margin: 0;
-    padding: 0;
+    gap: var(--spacing-lg);
+    margin-left: auto;
   }
 
-  nav a {
-    padding: 0.4rem 0.75rem;
-    border-radius: var(--radius);
-    font-size: 0.9rem;
-    color: var(--color-text-muted);
-    transition: color 0.15s, background 0.15s;
+  .nav-links a {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-muted);
+    transition: color var(--transition-fast);
   }
 
-  nav a:hover {
-    color: var(--color-text);
-    background: var(--color-bg-subtle);
-  }
+  .nav-links a:hover { color: var(--color-text); }
 
-  .header-actions {
+  .nav-actions {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    flex-shrink: 0;
+    gap: var(--spacing-md);
   }
 
-  .btn-ghost {
-    padding: 0.4rem 0.75rem;
-    border-radius: var(--radius);
-    font-size: 0.875rem;
-    color: var(--color-text-muted);
-    transition: color 0.15s;
+  .nav-admin {
+    font-size: var(--font-size-sm);
+    color: var(--color-muted);
   }
 
-  .btn-ghost:hover { color: var(--color-text); }
-
-  .btn-primary {
-    padding: 0.5rem 1rem;
-    border-radius: var(--radius);
-    font-size: 0.875rem;
-    font-weight: 600;
-    background: var(--color-primary);
-    color: var(--color-primary-fg);
-    transition: background 0.15s;
+  .nav-cta {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-sm);
   }
 
-  .btn-primary:hover { background: var(--color-primary-hover); }
+  main { min-height: calc(100vh - 200px); }
 
-  /* Footer */
   .site-footer {
+    background: var(--color-surface);
     border-top: 1px solid var(--color-border);
-    background: var(--color-bg-subtle);
-    padding: 3rem 0 1.5rem;
   }
 
-  .footer-grid {
+  .footer-content {
+    max-width: var(--wide-width);
+    margin: 0 auto;
+    padding: var(--spacing-4xl) var(--spacing-lg) var(--spacing-2xl);
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
-    gap: 2rem;
-    padding-bottom: 2.5rem;
-    border-bottom: 1px solid var(--color-border);
+    grid-template-columns: 1fr 2fr;
+    gap: var(--spacing-4xl);
   }
 
-  .footer-brand .logo { margin-bottom: 0.75rem; }
-
-  .footer-brand p {
-    font-size: 0.875rem;
-    color: var(--color-text-muted);
-    margin: 0;
+  .footer-logo {
+    font-size: var(--font-size-xl);
+    font-weight: 800;
+    color: var(--color-primary);
   }
 
-  .footer-links h3 {
-    font-size: 0.8rem;
+  .footer-tagline {
+    margin-top: var(--spacing-sm);
+    font-size: var(--font-size-sm);
+    color: var(--color-muted);
+  }
+
+  .footer-links {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-xl);
+  }
+
+  .footer-col h4 {
+    font-size: var(--font-size-sm);
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--color-text-muted);
-    margin-bottom: 0.75rem;
+    margin-bottom: var(--spacing-md);
   }
 
-  .footer-links ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
+  .footer-col a {
+    display: block;
+    font-size: var(--font-size-sm);
+    color: var(--color-muted);
+    padding: var(--spacing-xs) 0;
+    transition: color var(--transition-fast);
   }
 
-  .footer-links a {
-    font-size: 0.875rem;
-    color: var(--color-text-muted);
-    transition: color 0.15s;
-  }
-
-  .footer-links a:hover { color: var(--color-text); }
+  .footer-col a:hover { color: var(--color-text); }
 
   .footer-bottom {
+    max-width: var(--wide-width);
+    margin: 0 auto;
+    padding: var(--spacing-lg);
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    padding-top: 1.5rem;
-    font-size: 0.8rem;
-    color: var(--color-text-muted);
-    gap: 1rem;
+    align-items: center;
+    font-size: var(--font-size-sm);
+    color: var(--color-muted);
+    border-top: 1px solid var(--color-border);
     flex-wrap: wrap;
+    gap: var(--spacing-md);
   }
 
-  .footer-bottom p { margin: 0; }
+  .footer-powered a { color: var(--color-text); }
 
-  .theme-switcher { display: flex; gap: 0.5rem; }
+  .theme-switcher { display: flex; gap: var(--spacing-xs); }
 
-  .theme-switcher button {
-    background: none;
+  .theme-btn {
+    background: transparent;
     border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    padding: 0.25rem 0.5rem;
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: var(--font-size-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
     cursor: pointer;
-    color: var(--color-text-muted);
-    font-size: 0.875rem;
-    transition: border-color 0.15s;
+    transition: all var(--transition-fast);
   }
 
-  .theme-switcher button:hover { border-color: var(--color-text); }
-
-  .powered-by a { color: var(--color-primary); }
+  .theme-btn:hover { color: var(--color-text); border-color: var(--color-text); }
+  .theme-btn.active { background: var(--color-bg); color: var(--color-text); border-color: var(--color-primary); }
 
   @media (max-width: 768px) {
-    nav, .btn-ghost { display: none; }
-
-    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .footer-content { grid-template-columns: 1fr; gap: var(--spacing-2xl); }
+    .footer-links { grid-template-columns: repeat(2, 1fr); }
+    .footer-bottom { flex-direction: column; text-align: center; }
+    .nav-links { display: none; }
   }
 </style>
