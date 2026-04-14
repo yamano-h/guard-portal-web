@@ -3,7 +3,7 @@ import { getEmDashEntry } from "emdash";
 import Base from "../layouts/Base.astro";
 import MarketingBlocks from "../components/MarketingBlocks.astro";
 
-const page = await getEmDashEntry("pages", "pricing");
+const { entry: page } = await getEmDashEntry("pages", "pricing");
 ---
 
 <Base
