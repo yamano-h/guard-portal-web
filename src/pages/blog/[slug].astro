@@ -6,7 +6,7 @@ import Base from "../../layouts/Base.astro";
 export async function getStaticPaths() {
   const { entries: posts } = await getEmDashCollection("posts");
   return posts.map((post) => ({
-    params: { slug: post.data.slug },
+    params: { slug: post.slug },
   }));
 }
 
@@ -25,8 +25,8 @@ function formatDate(dateStr: string) {
 ---
 
 <Base
-  title={post.data.seoTitle ?? post.data.title}
-  description={post.data.seoDescription ?? post.data.excerpt ?? undefined}
+  title={post.data.seo_title ?? post.data.title}
+  description={post.data.seo_description ?? post.data.excerpt ?? undefined}
 >
   <article class="post">
     <header class="post-header">
@@ -39,9 +39,9 @@ function formatDate(dateStr: string) {
           <a href="/blog" class="back-link">← ブログ一覧</a>
         )}
         <h1>{post.data.title}</h1>
-        {post.data.publishedAt && (
-          <time datetime={post.data.publishedAt} class="date">
-            {formatDate(post.data.publishedAt)}
+        {post.data.post_date && (
+          <time datetime={post.data.post_date} class="date">
+            {formatDate(post.data.post_date)}
           </time>
         )}
       </div>

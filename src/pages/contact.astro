@@ -7,8 +7,8 @@ const page = await getEmDashEntry("pages", "contact");
 ---
 
 <Base
-  title={page?.data.seoTitle ?? "お問い合わせ"}
-  description={page?.data.seoDescription ?? undefined}
+  title={page?.data.seo_title ?? "お問い合わせ"}
+  description={page?.data.seo_description ?? undefined}
 >
   {page && <MarketingBlocks blocks={page.data.content} />}
 

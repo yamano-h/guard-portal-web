@@ -5,10 +5,10 @@ import Base from "../../layouts/Base.astro";
 const { entries: posts } = await getEmDashCollection("posts");
 
 const sortedPosts = posts
-  .filter((p) => p.data.status === "published" || p.data.publishedAt)
+  .filter((p) => p.data.status === "published" || p.data.post_date)
   .sort((a, b) => {
-    const dateA = a.data.publishedAt ? new Date(a.data.publishedAt).getTime() : 0;
-    const dateB = b.data.publishedAt ? new Date(b.data.publishedAt).getTime() : 0;
+    const dateA = a.data.post_date ? new Date(a.data.post_date).getTime() : 0;
+    const dateB = b.data.post_date ? new Date(b.data.post_date).getTime() : 0;
     return dateB - dateA;
   });
 
@@ -42,14 +42,14 @@ function formatDate(dateStr: string) {
                 <span class="category">{post.data.category}</span>
               )}
               <h2>
-                <a href={`/blog/${post.data.slug}`}>{post.data.title}</a>
+                <a href={`/blog/${post.slug}`}>{post.data.title}</a>
               </h2>
               {post.data.excerpt && (
                 <p class="excerpt">{post.data.excerpt}</p>
               )}
-              {post.data.publishedAt && (
-                <time datetime={post.data.publishedAt} class="date">
-                  {formatDate(post.data.publishedAt)}
+              {post.data.post_date && (
+                <time datetime={post.data.post_date} class="date">
+                  {formatDate(post.data.post_date)}
                 </time>
               )}
             </article>
