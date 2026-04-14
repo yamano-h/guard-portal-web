@@ -20,38 +20,48 @@ function formatDate(dateStr: string) {
 ---
 
 <Base title="ブログ" description="警備業界のDX推進・書類管理・法令解説に関する情報をお届けします。">
+  <!-- Hero -->
   <section class="blog-hero">
     <div class="container">
-      <h1>ブログ</h1>
-      <p>警備業界のDX推進・書類管理・法令解説に関する情報をお届けします。</p>
+      <div class="hero-inner">
+        <div class="hero-badge">ブログ</div>
+        <h1>警備業界の最新情報</h1>
+        <p class="hero-sub">警備業界のDX推進・書類管理・法令解説に関する情報をお届けします。</p>
+      </div>
     </div>
   </section>
 
+  <!-- Post listing -->
   <section class="blog-list">
     <div class="container">
       {sortedPosts.length === 0 ? (
         <div class="empty">
-          <p>まだ記事がありません。管理画面から記事を追加してください。</p>
-          <a href="/admin">管理画面を開く →</a>
+          <p>まだ記事がありません。</p>
+          <a href="/_emdash/admin">管理画面から記事を追加する →</a>
         </div>
       ) : (
         <div class="posts-grid">
           {sortedPosts.map((post) => (
             <article class="post-card">
-              {post.data.category && (
-                <span class="category">{post.data.category}</span>
-              )}
-              <h2>
-                <a href={`/blog/${post.slug}`}>{post.data.title}</a>
-              </h2>
-              {post.data.excerpt && (
-                <p class="excerpt">{post.data.excerpt}</p>
-              )}
-              {post.data.post_date && (
-                <time datetime={post.data.post_date} class="date">
-                  {formatDate(post.data.post_date)}
-                </time>
-              )}
+              <div class="post-card-body">
+                {post.data.category && (
+                  <span class="badge">{post.data.category}</span>
+                )}
+                <h2 class="post-title">
+                  <a href={`/blog/${post.slug}`}>{post.data.title}</a>
+                </h2>
+                {post.data.excerpt && (
+                  <p class="excerpt">{post.data.excerpt}</p>
+                )}
+              </div>
+              <div class="post-card-footer">
+                {post.data.post_date && (
+                  <time datetime={post.data.post_date} class="date">
+                    {formatDate(post.data.post_date)}
+                  </time>
+                )}
+                <a href={`/blog/${post.slug}`} class="read-more">続きを読む →</a>
+              </div>
             </article>
           ))}
         </div>
@@ -61,73 +71,173 @@ function formatDate(dateStr: string) {
 </Base>
 
 <style>
+  /* === Hero === */
   .blog-hero {
-    padding: 4rem 0 2.5rem;
-    background: var(--color-bg-subtle);
-    border-bottom: 1px solid var(--color-border);
+    padding: 5rem 0 4rem;
+    background: linear-gradient(160deg, #F8FAFC 0%, #EFF6FF 60%, #F8FAFC 100%);
+    border-bottom: 1px solid #E2E8F0;
+    text-align: center;
   }
 
-  .blog-hero h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+  .hero-inner {
+    max-width: 640px;
+    margin: 0 auto;
+  }
 
-  .blog-hero p { color: var(--color-text-muted); margin: 0; }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.85rem;
+    border-radius: 9999px;
+    background: #EFF6FF;
+    color: #2563EB;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 1px solid #BFDBFE;
+    margin-bottom: 1rem;
+  }
 
-  .blog-list { padding: 3rem 0 6rem; }
+  .blog-hero h1 {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    color: #0F172A;
+    line-height: 1.15;
+    margin-bottom: 0.75rem;
+  }
+
+  .hero-sub {
+    font-size: 1rem;
+    color: #475569;
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  /* === Blog List === */
+  .blog-list {
+    background: #F8FAFC;
+    padding: 4rem 0 6rem;
+  }
 
   .posts-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 1.5rem;
+    gap: 1.25rem;
   }
 
+  /* === Post Card — feature-card スタイルに合わせる === */
   .post-card {
-    border: 1px solid var(--color-border);
-    border-radius: calc(var(--radius) * 2);
-    padding: 1.75rem;
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 16px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    transition: border-color 0.15s, box-shadow 0.15s;
+    overflow: hidden;
+    transition: border-color 150ms, box-shadow 150ms, transform 150ms;
   }
 
   .post-card:hover {
-    border-color: var(--color-primary);
-    box-shadow: 0 2px 12px color-mix(in srgb, var(--color-primary) 10%, transparent);
+    border-color: #BFDBFE;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
+    transform: translateY(-2px);
   }
 
-  .category {
-    font-size: 0.75rem;
+  .post-card-body {
+    padding: 1.75rem 1.75rem 1rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  /* Badge — DESIGN.md バッジスタイル */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.6rem;
+    border-radius: 9999px;
+    background: #EFF6FF;
+    color: #1D4ED8;
+    font-size: 0.7rem;
     font-weight: 600;
-    color: var(--color-primary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    border: 1px solid #BFDBFE;
+    align-self: flex-start;
   }
 
-  .post-card h2 { font-size: 1.1rem; margin: 0; }
+  .post-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0F172A;
+    letter-spacing: -0.01em;
+    line-height: 1.4;
+    margin: 0;
+  }
 
-  .post-card h2 a { color: var(--color-text); transition: color 0.15s; }
+  .post-title a {
+    color: inherit;
+    transition: color 150ms;
+  }
 
-  .post-card h2 a:hover { color: var(--color-primary); }
+  .post-title a:hover { color: #2563EB; }
 
   .excerpt {
     font-size: 0.875rem;
-    color: var(--color-text-muted);
+    color: #475569;
+    line-height: 1.65;
     margin: 0;
-    line-height: 1.6;
     flex: 1;
   }
 
-  .date {
-    font-size: 0.8rem;
-    color: var(--color-text-muted);
-    margin-top: 0.25rem;
+  .post-card-footer {
+    padding: 1rem 1.75rem 1.4rem;
+    border-top: 1px solid #F1F5F9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
   }
 
+  .date {
+    font-size: 0.75rem;
+    color: #94A3B8;
+    font-weight: 500;
+  }
+
+  .read-more {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #2563EB;
+    transition: color 150ms;
+    white-space: nowrap;
+  }
+
+  .read-more:hover { color: #1D4ED8; }
+
+  /* === Empty state === */
   .empty {
     text-align: center;
-    padding: 4rem 0;
+    padding: 5rem 0;
   }
 
-  .empty p { color: var(--color-text-muted); margin-bottom: 1rem; }
+  .empty p {
+    color: #94A3B8;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+  }
 
-  .empty a { color: var(--color-primary); font-weight: 600; }
+  .empty a {
+    color: #2563EB;
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+
+  /* === Responsive === */
+  @media (max-width: 768px) {
+    .blog-hero { padding: 3.5rem 0 3rem; }
+    .blog-list { padding: 3rem 0 4rem; }
+    .posts-grid { grid-template-columns: 1fr; }
+  }
 </style>
